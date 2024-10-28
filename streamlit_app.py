@@ -20,20 +20,20 @@ def get_data(csv_url):
         return None
 
 # Define a function for plotting FBS and PPBS readings
-def plot_health_tracker(df, start_date, end_date):
+def plot_health_tracker(df, freq):
     # Ensure 'DATE' is in datetime format
     df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
     
-    # Filter data based on the selected date range
-    df_filtered = df[(df['DATE'] >= start_date) & (df['DATE'] <= end_date)]
+    # Group data by specified frequency
+    df_grouped = df.groupby(pd.Grouper(key='DATE', freq=freq)).mean().reset_index()
 
     # Create the figure
     fig = go.Figure()
 
     # Add FBS line
     fig.add_trace(go.Scatter(
-        x=df_filtered['DATE'], 
-        y=df_filtered['FBS'], 
+        x=df_grouped['DATE'], 
+        y=df_grouped['FBS'], 
         mode='lines+markers', 
         name='FBS', 
         line=dict(color='blue'),
@@ -42,8 +42,8 @@ def plot_health_tracker(df, start_date, end_date):
 
     # Add PPBS line
     fig.add_trace(go.Scatter(
-        x=df_filtered['DATE'], 
-        y=df_filtered['PPBS'], 
+        x=df_grouped['DATE'], 
+        y=df_grouped['PPBS'], 
         mode='lines+markers', 
         name='PPBS', 
         line=dict(color='red'),
@@ -52,8 +52,8 @@ def plot_health_tracker(df, start_date, end_date):
 
     # Add the normal range for FBS and PPBS
     fig.add_trace(go.Scatter(
-        x=df_filtered['DATE'],
-        y=[100]*len(df_filtered['DATE']),
+        x=df_grouped['DATE'],
+        y=[100]*len(df_grouped['DATE']),
         mode='lines',
         name='FBS Normal Range',
         line=dict(color='green', width=0.5, dash='dash'),
@@ -61,8 +61,8 @@ def plot_health_tracker(df, start_date, end_date):
     ))
 
     fig.add_trace(go.Scatter(
-        x=df_filtered['DATE'],
-        y=[140]*len(df_filtered['DATE']),
+        x=df_grouped['DATE'],
+        y=[140]*len(df_grouped['DATE']),
         mode='lines',
         name='PPBS Normal Range',
         line=dict(color='green', width=0.5, dash='dash'),
@@ -85,16 +85,18 @@ def plot_health_tracker(df, start_date, end_date):
 def main():
     st.title("Health Tracker")  # Main title for Streamlit
 
-    # Date input for selecting the date range
-    st.sidebar.header("Select Date Range")
-    start_date = st.sidebar.date_input("Start date", value=pd.to_datetime("2020-01-01"))
-    end_date = st.sidebar.date_input("End date", value=pd.to_datetime("today"))
+    # Slicer to select the frequency for date grouping
+    freq = st.selectbox(
+        'Select the frequency for date grouping:',
+        options=['M', 'Q', 'Y'],
+        format_func=lambda x: {'M': 'Monthly', 'Q': 'Quarterly', 'Y': 'Yearly'}[x]
+    )
 
     df = get_data(csv_url)
     if df is not None:
         # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
         if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
-            plot_health_tracker(df, start_date, end_date)
+            plot_health_tracker(df, freq)
         else:
             st.error("The CSV must contain 'DATE', 'FBS', and 'PPBS' columns.")
     else:
@@ -102,3 +104,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
