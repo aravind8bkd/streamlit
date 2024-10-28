@@ -27,24 +27,26 @@ def plot_health_tracker(df):
     # Create the figure for FBS and PPBS
     fig = go.Figure()
 
-    # Add FBS line
+    # Add FBS line (connect non-consecutive points)
     fig.add_trace(go.Scatter(
         x=df['DATE'], 
-        y=df['FBS'], 
+        y=df['FBS'],
         mode='lines+markers', 
         name='FBS', 
         line=dict(color='blue'),
-        marker=dict(size=6)
+        marker=dict(size=6),
+        connectgaps=True  # Connect non-consecutive points
     ))
 
-    # Add PPBS line
+    # Add PPBS line (connect non-consecutive points)
     fig.add_trace(go.Scatter(
         x=df['DATE'], 
         y=df['PPBS'], 
         mode='lines+markers', 
         name='PPBS', 
         line=dict(color='red'),
-        marker=dict(size=6)
+        marker=dict(size=6),
+        connectgaps=True  # Connect non-consecutive points
     ))
 
     # Update layout for better appearance
@@ -78,7 +80,18 @@ def plot_weight(df):
             mode='lines+markers',  # Line with markers
             name='Weight',
             line=dict(color='orange', width=2),
-            marker=dict(size=6)
+            marker=dict(size=6),
+            connectgaps=True  # Connect non-consecutive points
+        ))
+
+        # Add target weight line at 80kg in bold green color
+        weight_fig.add_trace(go.Scatter(
+            x=df['DATE'],
+            y=[80]*len(df['DATE']),  # Constant line at y=80
+            mode='lines',  # Only line
+            name='Target Weight (80kg)',
+            line=dict(color='green', width=4, dash='solid'),  # Bold green line
+            showlegend=True
         ))
 
         # Update layout for better appearance
