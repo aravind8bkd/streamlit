@@ -140,13 +140,14 @@ def plot_weight(df):
 # Streamlit App Layout
 def main():
     st.title("Health Tracker")  # Main title for Streamlit
-
+    st. set_page_config(layout="wide") 
     df = get_data(csv_url)
     if df is not None:
-        # Dropdown for date aggregation
+        # Dropdown for date aggregation with default set to 'Yearly'
         frequency = st.selectbox(
             "Select Date Aggregation:",
-            ["Monthly", "Quarterly", "Yearly", "All Data Points"]
+            ["Monthly", "Quarterly", "Yearly", "All Data Points"],
+            index=2  # Set default index to 'Yearly' (third option)
         )
         
         # Aggregate data based on the selected frequency
