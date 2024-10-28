@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # GitHub CSV link (raw URL) - replace with your actual URL
-dropbox_url = "https://github.com/aravind8bkd/streamlit/blob/main/myhealthtracker.csv"
+dropbox_url = "https://raw.githubusercontent.com/aravind8bkd/streamlit/refs/heads/main/myhealthtracker.csv"
 
 # Function to fetch data from GitHub CSV
 def get_github_data(csv_url):
