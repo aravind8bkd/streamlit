@@ -19,16 +19,30 @@ def get_data(csv_url):
         st.error(f"Error loading CSV: {e}")
         return None
 
-# Function to filter data based on selected year
-def filter_data_by_year(df, selected_year):
-    df['YEAR'] = df['DATE'].dt.year
-    return df[df['YEAR'] == selected_year]
+# Function to aggregate data based on the selected frequency
+def aggregate_data(df, frequency):
+    # Ensure 'DATE' is in datetime format
+    df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
+    
+    # Set 'DATE' as the index for resampling
+    df.set_index('DATE', inplace=True)
+    
+    # Aggregate data based on frequency
+    if frequency == 'Daily':
+        aggregated_df = df
+    elif frequency == 'Weekly':
+        aggregated_df = df.resample('W').mean()  # Taking the mean for weekly aggregation
+    elif frequency == 'Monthly':
+        aggregated_df = df.resample('M').mean()  # Taking the mean for monthly aggregation
+    else:
+        aggregated_df = df
+
+    # Reset index for plotting
+    aggregated_df.reset_index(inplace=True)
+    return aggregated_df
 
 # Define a function for plotting FBS and PPBS readings
 def plot_health_tracker(df):
-    # Ensure 'DATE' is in datetime format
-    df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
-
     # Create the figure for FBS and PPBS
     fig = go.Figure()
 
@@ -56,7 +70,7 @@ def plot_health_tracker(df):
 
     # Update layout for better appearance
     fig.update_layout(
-        title='Blood Glucose Level',  # Updated plot title
+        title='Blood Glucose Level',
         xaxis_title='Date',
         yaxis_title='Blood Sugar Readings (mg/dL)',
         yaxis=dict(range=[0, 200]),  # Set the range of Y-axis
@@ -127,19 +141,18 @@ def main():
 
     df = get_data(csv_url)
     if df is not None:
-        # Ensure 'DATE' is in datetime format
-        df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
+        # Dropdown for date aggregation
+        frequency = st.selectbox(
+            "Select Date Aggregation:",
+            ["Daily", "Weekly", "Monthly"]
+        )
+        
+        # Aggregate data based on the selected frequency
+        aggregated_df = aggregate_data(df, frequency)
 
-        # Create a year slider
-        years = df['DATE'].dt.year.unique()  # Get unique years
-        selected_year = st.slider("Select Year", min_value=int(years.min()), max_value=int(years.max()), value=int(years.max()))
-
-        # Filter data based on selected year
-        filtered_df = df[df['DATE'].dt.year == selected_year]  # Filter directly using dt.year
-
-        # Plot the data for the selected year
-        plot_health_tracker(filtered_df)
-        plot_weight(filtered_df)  # Plot weight if available
+        # Plot health tracker and weight plots with aggregated data
+        plot_health_tracker(aggregated_df)
+        plot_weight(aggregated_df)  # Plot weight if available
     else:
         st.error("Failed to load data.")
 
