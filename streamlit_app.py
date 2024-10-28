@@ -28,12 +28,14 @@ def aggregate_data(df, frequency):
     df.set_index('DATE', inplace=True)
     
     # Aggregate data based on frequency
-    if frequency == 'Daily':
-        aggregated_df = df
-    elif frequency == 'Weekly':
-        aggregated_df = df.resample('W').mean()  # Taking the mean for weekly aggregation
-    elif frequency == 'Monthly':
+    if frequency == 'Monthly':
         aggregated_df = df.resample('M').mean()  # Taking the mean for monthly aggregation
+    elif frequency == 'Quarterly':
+        aggregated_df = df.resample('Q').mean()  # Taking the mean for quarterly aggregation
+    elif frequency == 'Yearly':
+        aggregated_df = df.resample('Y').mean()  # Taking the mean for yearly aggregation
+    elif frequency == 'All Data Points':
+        aggregated_df = df  # No aggregation, use all data points
     else:
         aggregated_df = df
 
@@ -144,7 +146,7 @@ def main():
         # Dropdown for date aggregation
         frequency = st.selectbox(
             "Select Date Aggregation:",
-            ["Daily", "Weekly", "Monthly"]
+            ["Monthly", "Quarterly", "Yearly", "All Data Points"]
         )
         
         # Aggregate data based on the selected frequency
