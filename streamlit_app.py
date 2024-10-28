@@ -47,21 +47,15 @@ def plot_health_tracker(df):
     st.pyplot(fig)
 
 # Streamlit App Layout
-def main():
-    st.header("Health Tracker")  # Header for Streamlit
-
-    df = get_github_data(dropbox_url)
-    if df is not None:
-        # Debugging: Show the columns of the DataFrame
-        st.write("Columns in the DataFrame:", df.columns.tolist())  # Display column names for debugging
-        
-        # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
-        if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
-            plot_health_tracker(df)
-        else:
-            st.error("The CSV must contain 'DATE', 'FBS', and 'PPBS' columns.")
+df = get_github_data(dropbox_url)
+if df is not None:
+    # Debugging: Show the columns of the DataFrame
+    st.write("Columns in the DataFrame:", df.columns.tolist())  # Display column names for debugging
+    
+    # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
+    if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
+        plot_health_tracker(df)
     else:
-        st.error("Failed to load data.")
-
-if __name__ == "__main__":
-    main()
+        st.error("The CSV must contain 'DATE', 'FBS', and 'PPBS' columns.")
+else:
+    st.error("Failed to load data.")
