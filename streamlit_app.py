@@ -17,22 +17,22 @@ def get_gsheet_data(sheet_url):
 
 # Define a function for plotting FBS and PPBS readings
 def plot_health_tracker(df):
-    st.title("My Health Tracker")
+    st.title("Health Tracker")
 
     # Ensure 'Date' is in datetime format
-    df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d')
+    df['DATE'] = pd.to_datetime(df['Date'], format='%Y-%m-%d')
     
     # Plotting
     fig, ax = plt.subplots(figsize=(10, 6))
 
     # Plot FBS and PPBS readings
-    ax.plot(df['Date'], df['FBS'], label='FBS', marker='o', color='blue')
-    ax.plot(df['Date'], df['PPBS'], label='PPBS', marker='o', color='red')
+    ax.plot(df['DATE'], df['FBS'], label='FBS', marker='o', color='blue')
+    ax.plot(df['DATE'], df['PPBS'], label='PPBS', marker='o', color='red')
 
     # Plot the normal range (green area)
     # Normal FBS range: 70-100 mg/dL, Normal PPBS range: 100-140 mg/dL
-    ax.fill_between(df['Date'], 70, 100, color='green', alpha=0.1, label="Normal FBS Range")
-    ax.fill_between(df['Date'], 100, 140, color='green', alpha=0.1, label="Normal PPBS Range")
+    ax.fill_between(df['DATE'], 70, 100, color='green', alpha=0.1, label="Normal FBS Range")
+    ax.fill_between(df['DATE'], 100, 140, color='green', alpha=0.1, label="Normal PPBS Range")
 
     # Adding labels and title
     ax.set_title('My Health Tracker')
@@ -45,7 +45,7 @@ def plot_health_tracker(df):
 
 # Streamlit App Layout
 def main():
-    st.header("Google Sheets Data Dashboard")
+    st.header("Health Tracker")
 
     try:
         # Fetch and display the data
