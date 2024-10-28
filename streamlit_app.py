@@ -8,11 +8,11 @@ dropbox_url = "https://github.com/aravind8bkd/streamlit/blob/main/myhealthtracke
 # Function to fetch data from GitHub CSV
 def get_github_data(csv_url):
     try:
-        # Read the CSV with correct settings
+        # Read the CSV
         df = pd.read_csv(csv_url, 
-                         delimiter='\t',       # Using tab as delimiter since it seems you may have tab-separated values
-                         encoding='utf-8',     # Explicitly specify encoding
-                         skip_blank_lines=True  # Skip blank lines if they exist
+                         delimiter=',',  # Assuming the CSV is comma-separated
+                         encoding='utf-8', 
+                         skip_blank_lines=True
                          )
         return df
     except Exception as e:
@@ -52,6 +52,9 @@ def main():
 
     df = get_github_data(dropbox_url)
     if df is not None:
+        # Debugging: Show the columns of the DataFrame
+        st.write("Columns in the DataFrame:", df.columns.tolist())  # Display column names for debugging
+        
         # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
         if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
             plot_health_tracker(df)
