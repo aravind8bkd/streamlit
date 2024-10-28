@@ -2,11 +2,11 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# CSV link (with dl=1 for direct download)
-url = "https://github.com/aravind8bkd/streamlit/blob/main/myhealthtracker.csv"
+# GitHub CSV link (raw URL)
+dropbox_url = "https://github.com/aravind8bkd/streamlit/blob/main/myhealthtracker.csv"
 
-# Function to fetch data from Dropbox CSV
-def get_dropbox_data(csv_url):
+# Function to fetch data from GitHub CSV
+def get_github_data(csv_url):
     try:
         # Read the CSV with correct settings
         df = pd.read_csv(csv_url, 
@@ -51,7 +51,7 @@ def plot_health_tracker(df):
 def main():
     st.header("Health Tracker")  # Updated header for Streamlit
 
-    df = get_dropbox_data(url)
+    df = get_github_data(dropbox_url)
     if df is not None:
         # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
         if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
