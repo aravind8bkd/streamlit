@@ -75,10 +75,12 @@ def plot_health_tracker(df):
         hovermode='x unified'
     )
 
-    # Update x-axis to display dates in "MMM-YYYY" format
+    # Update x-axis to automatically adjust tick spacing based on zoom
     fig.update_xaxes(
-        tickformat="%b-%Y",  # Format for x-axis
-        dtick="M1"  # Show one tick per month
+        tickformat="%b-%Y",  # Format for x-axis labels
+        tickangle=-45,  # Angle for better visibility
+        showspikes=True,  # Optional: Show spikes on hover
+        spikemode="across",  # Optional: Cross-mode for spikes
     )
 
     # Display the plot in Streamlit
@@ -100,5 +102,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
