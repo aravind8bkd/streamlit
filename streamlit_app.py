@@ -139,8 +139,8 @@ def plot_weight(df):
 
 # Streamlit App Layout
 def main():
+    st.set_page_config(layout="wide") 
     st.title("Health Tracker")  # Main title for Streamlit
-    st. set_page_config(layout="wide") 
     df = get_data(csv_url)
     if df is not None:
         # Dropdown for date aggregation with default set to 'Yearly'
