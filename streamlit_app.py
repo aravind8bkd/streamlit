@@ -21,11 +21,6 @@ def get_data(csv_url):
 
 # Define a function for plotting FBS and PPBS readings
 def plot_health_tracker(df):
-    st.title("Health Tracker")  # Title for Streamlit
-
-    # Ensure 'DATE' is in datetime format
-    df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
-
     # Create the figure
     fig = go.Figure()
 
@@ -82,10 +77,10 @@ def plot_health_tracker(df):
 
 # Streamlit App Layout
 def main():
-    st.header("Health Tracker")  # Header for Streamlit
+    st.title("Health Tracker")  # Main title for Streamlit
 
     df = get_data(csv_url)
-    if df is not None:        
+    if df is not None:
         # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
         if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
             plot_health_tracker(df)
