@@ -2,27 +2,31 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Hardcoded public Google Sheet URL
-public_sheet_url = "https://www.dropbox.com/scl/fi/v6z8u5w7nz9q4yymnuy3w/myhealthtracker.csv?rlkey=jl76yaeishjsk8wscrbhl2si6&dl=0"
+# Dropbox CSV link (with dl=1 for direct download)
+dropbox_url = "https://www.dropbox.com/scl/fi/v6z8u5w7nz9q4yymnuy3w/myhealthtracker.csv?rlkey=jl76yaeishjsk8wscrbhl2si6&dl=0"
 
-# Function to fetch data from a public Google Sheet
-def get_gsheet_data(sheet_url):
+# Function to fetch data from Dropbox CSV
+def get_dropbox_data(csv_url):
     try:
-        df = pd.read_csv(sheet_url)
+        # Read the CSV with correct settings
+        df = pd.read_csv(csv_url, 
+                         delimiter=',',        # Adjust delimiter if needed
+                         encoding='utf-8',     # Explicitly specify encoding
+                         quotechar='"',        # Handling special characters in quotes
+                         skip_blank_lines=True # Skip blank lines if they exist
+                         )
         return df
     except Exception as e:
         st.error(f"Error loading CSV: {e}")
         return None
-    
-    return df
 
 # Define a function for plotting FBS and PPBS readings
 def plot_health_tracker(df):
-    st.title("Health Tracker")
+    st.title("Health Tracker")  # Updated title for Streamlit
 
-    # Ensure 'Date' is in datetime format
-    df['DATE'] = pd.to_datetime(df['Date'], format='%Y-%m-%d')
-    
+    # Ensure 'DATE' is in datetime format
+    df['DATE'] = pd.to_datetime(df['DATE'], format='%Y-%m-%d')
+
     # Plotting
     fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -31,12 +35,11 @@ def plot_health_tracker(df):
     ax.plot(df['DATE'], df['PPBS'], label='PPBS', marker='o', color='red')
 
     # Plot the normal range (green area)
-    # Normal FBS range: 70-100 mg/dL, Normal PPBS range: 100-140 mg/dL
     ax.fill_between(df['DATE'], 70, 100, color='green', alpha=0.1, label="Normal FBS Range")
     ax.fill_between(df['DATE'], 100, 140, color='green', alpha=0.1, label="Normal PPBS Range")
 
-    # Adding labels and title
-    ax.set_title('My Health Tracker')
+    # Adding labels and updated title for the plot
+    ax.set_title('Health Tracker')  # Updated title for the plot
     ax.set_xlabel('Date')
     ax.set_ylabel('Blood Sugar Readings (mg/dL)')
     ax.legend()
@@ -46,17 +49,17 @@ def plot_health_tracker(df):
 
 # Streamlit App Layout
 def main():
-    st.header("Health Tracker")
+    st.header("Health Tracker")  # Updated header for Streamlit
 
-    try:
-        # Fetch and display the data
-        df = get_gsheet_data(public_sheet_url)
+    df = get_dropbox_data(dropbox_url)
+    if df is not None:
+        # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
         if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
             plot_health_tracker(df)
         else:
             st.error("The sheet must contain 'DATE', 'FBS', and 'PPBS' columns.")
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
+    else:
+        st.error("Failed to load data.")
 
 if __name__ == "__main__":
     main()
