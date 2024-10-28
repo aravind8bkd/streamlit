@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objs as go
 
 # URL of the raw CSV file from GitHub - replace with your actual URL
-csv_url = "https://raw.githubusercontent.com/username/repository/branch/filename.csv"
+csv_url = "https://raw.githubusercontent.com/aravind8bkd/streamlit/refs/heads/main/myhealthtracker.csv"
 
 # Function to fetch data from the provided CSV URL
 def get_data(csv_url):
