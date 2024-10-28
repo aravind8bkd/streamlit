@@ -24,7 +24,7 @@ def plot_health_tracker(df):
     # Ensure 'DATE' is in datetime format
     df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
 
-    # Create the figure
+    # Create the figure for FBS and PPBS
     fig = go.Figure()
 
     # Add FBS line
@@ -86,20 +86,48 @@ def plot_health_tracker(df):
     # Display the plot in Streamlit
     st.plotly_chart(fig)
 
+# Define a function for plotting Weight (Wt) readings
+def plot_weight(df):
+    # Create a bar plot for Weight
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(
+        x=df['DATE'],
+        y=df['Wt'],
+        name='Weight',
+        marker=dict(color='orange')
+    ))
+
+    # Update layout for better appearance
+    fig.update_layout(
+        title='Weight Tracking',
+        xaxis_title='Date',
+        yaxis_title='Weight (kg)',
+        hovermode='x unified'
+    )
+
+    # Update x-axis to automatically adjust tick spacing based on zoom
+    fig.update_xaxes(
+        tickformat="%b-%Y",  # Format for x-axis labels
+        tickangle=-45,  # Angle for better visibility
+        showspikes=True,  # Optional: Show spikes on hover
+        spikemode="across",  # Optional: Cross-mode for spikes
+    )
+
+    # Display the plot in Streamlit
+    st.plotly_chart(fig)
+
 # Streamlit App Layout
 def main():
     st.title("Health Tracker")  # Main title for Streamlit
 
     df = get_data(csv_url)
     if df is not None:
-        # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
-        if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
-            plot_health_tracker(df)
-        else:
-            st.error("The CSV must contain 'DATE', 'FBS', and 'PPBS' columns.")
+        # Directly plot without checking for column names
+        plot_health_tracker(df)
+        plot_weight(df)  # Plot the weight as well
     else:
         st.error("Failed to load data.")
 
 if __name__ == "__main__":
     main()
-
