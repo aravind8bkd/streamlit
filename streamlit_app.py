@@ -3,15 +3,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Hardcoded public Google Sheet URL
-public_sheet_url = "https://drive.google.com/file/d/1isYg80aXAVcifyV0QH5Eyuzl9MCYlu6Q/view?usp=sharing"
+public_sheet_url = "https://www.dropbox.com/scl/fi/v6z8u5w7nz9q4yymnuy3w/myhealthtracker.csv?rlkey=jl76yaeishjsk8wscrbhl2si6&dl=0"
 
 # Function to fetch data from a public Google Sheet
 def get_gsheet_data(sheet_url):
-    # Convert the Google Sheet URL into a CSV export URL
-    csv_export_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
-    
-    # Read the data into a DataFrame
-    df = pd.read_csv(csv_export_url)
+    try:
+        df = pd.read_csv(csv_url)
+        return df
+    except Exception as e:
+        st.error(f"Error loading CSV: {e}")
+        return None
     
     return df
 
@@ -50,10 +51,10 @@ def main():
     try:
         # Fetch and display the data
         df = get_gsheet_data(public_sheet_url)
-        if 'Date' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
+        if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
             plot_health_tracker(df)
         else:
-            st.error("The sheet must contain 'Date', 'FBS', and 'PPBS' columns.")
+            st.error("The sheet must contain 'DATE', 'FBS', and 'PPBS' columns.")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
