@@ -20,17 +20,20 @@ def get_data(csv_url):
         return None
 
 # Define a function for plotting FBS and PPBS readings
-def plot_health_tracker(df):
+def plot_health_tracker(df, start_date, end_date):
     # Ensure 'DATE' is in datetime format
     df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
     
+    # Filter data based on the selected date range
+    df_filtered = df[(df['DATE'] >= start_date) & (df['DATE'] <= end_date)]
+
     # Create the figure
     fig = go.Figure()
 
     # Add FBS line
     fig.add_trace(go.Scatter(
-        x=df['DATE'], 
-        y=df['FBS'], 
+        x=df_filtered['DATE'], 
+        y=df_filtered['FBS'], 
         mode='lines+markers', 
         name='FBS', 
         line=dict(color='blue'),
@@ -39,8 +42,8 @@ def plot_health_tracker(df):
 
     # Add PPBS line
     fig.add_trace(go.Scatter(
-        x=df['DATE'], 
-        y=df['PPBS'], 
+        x=df_filtered['DATE'], 
+        y=df_filtered['PPBS'], 
         mode='lines+markers', 
         name='PPBS', 
         line=dict(color='red'),
@@ -49,8 +52,8 @@ def plot_health_tracker(df):
 
     # Add the normal range for FBS and PPBS
     fig.add_trace(go.Scatter(
-        x=df['DATE'],
-        y=[100]*len(df['DATE']),
+        x=df_filtered['DATE'],
+        y=[100]*len(df_filtered['DATE']),
         mode='lines',
         name='FBS Normal Range',
         line=dict(color='green', width=0.5, dash='dash'),
@@ -58,8 +61,8 @@ def plot_health_tracker(df):
     ))
 
     fig.add_trace(go.Scatter(
-        x=df['DATE'],
-        y=[140]*len(df['DATE']),
+        x=df_filtered['DATE'],
+        y=[140]*len(df_filtered['DATE']),
         mode='lines',
         name='PPBS Normal Range',
         line=dict(color='green', width=0.5, dash='dash'),
@@ -72,12 +75,7 @@ def plot_health_tracker(df):
         xaxis_title='Date',
         yaxis_title='Blood Sugar Readings (mg/dL)',
         yaxis=dict(range=[0, 200]),  # Set the range of Y-axis
-        hovermode='x unified',
-        xaxis=dict(
-            title='Date',
-            tickformat="%Y-%m-%d",  # Customize tick format for dates
-            rangeslider=dict(visible=True)  # Add a range slider for zooming
-        )
+        hovermode='x unified'
     )
 
     # Display the plot in Streamlit
@@ -87,11 +85,16 @@ def plot_health_tracker(df):
 def main():
     st.title("Health Tracker")  # Main title for Streamlit
 
+    # Date input for selecting the date range
+    st.sidebar.header("Select Date Range")
+    start_date = st.sidebar.date_input("Start date", value=pd.to_datetime("2020-01-01"))
+    end_date = st.sidebar.date_input("End date", value=pd.to_datetime("today"))
+
     df = get_data(csv_url)
     if df is not None:
         # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
         if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
-            plot_health_tracker(df)
+            plot_health_tracker(df, start_date, end_date)
         else:
             st.error("The CSV must contain 'DATE', 'FBS', and 'PPBS' columns.")
     else:
