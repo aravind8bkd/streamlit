@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Hardcoded public Google Sheet URL
-public_sheet_url = "https://docs.google.com/spreadsheets/d/1oXeoZQzb6B4_kzVe2OorPJW_jHYxzD1Rx9wrGQi-hXc/edit?gid=0#gid=0"
+public_sheet_url = "https://drive.google.com/file/d/1isYg80aXAVcifyV0QH5Eyuzl9MCYlu6Q/view?usp=sharing"
 
 # Function to fetch data from a public Google Sheet
 def get_gsheet_data(sheet_url):
