@@ -34,8 +34,7 @@ def plot_health_tracker(df):
         mode='lines+markers', 
         name='FBS', 
         line=dict(color='blue'),
-        marker=dict(size=6),
-        hovertemplate='Date: %{x|%b-%Y}<br>FBS: %{y}<extra></extra>'  # Custom hover info
+        marker=dict(size=6)
     ))
 
     # Add PPBS line
@@ -45,8 +44,7 @@ def plot_health_tracker(df):
         mode='lines+markers', 
         name='PPBS', 
         line=dict(color='red'),
-        marker=dict(size=6),
-        hovertemplate='Date: %{x|%b-%Y}<br>PPBS: %{y}<extra></extra>'  # Custom hover info
+        marker=dict(size=6)
     ))
 
     # Shade the normal range for FBS and PPBS
@@ -71,7 +69,7 @@ def plot_health_tracker(df):
     # Add area fill between the normal range
     fig.add_trace(go.Scatter(
         x=pd.concat([df['DATE'], df['DATE'][::-1]]),  # Dates for area fill
-        y=pd.concat([[100]*len(df['DATE']), [140]*len(df['DATE'])[::-1]]),  # Fill from 100 to 140
+        y=pd.concat([[100]*len(df['DATE']), [140]*len(df['DATE')[::-1]]]),  # Fill from 100 to 140
         fill='toself',  # Fill area
         fillcolor='rgba(144, 238, 144, 0.5)',  # Light green color with transparency
         name='Normal Range',
@@ -114,5 +112,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
