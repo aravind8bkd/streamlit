@@ -20,17 +20,17 @@ def get_data(csv_url):
         return None
 
 # Define a function for plotting FBS and PPBS readings
-def plot_health_tracker(df):
-    # Ensure 'DATE' is in datetime format
-    df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
+def plot_health_tracker(df, start_date, end_date):
+    # Filter the DataFrame based on the selected date range
+    filtered_df = df[(df['DATE'] >= start_date) & (df['DATE'] <= end_date)]
 
     # Create the figure for FBS and PPBS
     fig = go.Figure()
 
     # Add FBS line (connect non-consecutive points)
     fig.add_trace(go.Scatter(
-        x=df['DATE'], 
-        y=df['FBS'],
+        x=filtered_df['DATE'], 
+        y=filtered_df['FBS'],
         mode='lines+markers', 
         name='FBS', 
         line=dict(color='blue'),
@@ -40,8 +40,8 @@ def plot_health_tracker(df):
 
     # Add PPBS line (connect non-consecutive points)
     fig.add_trace(go.Scatter(
-        x=df['DATE'], 
-        y=df['PPBS'], 
+        x=filtered_df['DATE'], 
+        y=filtered_df['PPBS'], 
         mode='lines+markers', 
         name='PPBS', 
         line=dict(color='red'),
@@ -70,13 +70,16 @@ def plot_health_tracker(df):
     st.plotly_chart(fig)
 
 # Define a function for plotting weight as a line plot
-def plot_weight(df):
-    if 'Wt' in df.columns and df['Wt'].notna().any():  # Check if 'Wt' exists and has values
+def plot_weight(df, start_date, end_date):
+    # Filter the DataFrame based on the selected date range
+    filtered_df = df[(df['DATE'] >= start_date) & (df['DATE'] <= end_date)]
+
+    if 'Wt' in filtered_df.columns and filtered_df['Wt'].notna().any():  # Check if 'Wt' exists and has values
         # Create a line plot for Weight
         weight_fig = go.Figure()
         weight_fig.add_trace(go.Scatter(
-            x=df['DATE'],
-            y=df['Wt'],
+            x=filtered_df['DATE'],
+            y=filtered_df['Wt'],
             mode='lines+markers',  # Line with markers
             name='Weight',
             line=dict(color='orange', width=2),
@@ -86,8 +89,8 @@ def plot_weight(df):
 
         # Add target weight line at 80kg in bold green color
         weight_fig.add_trace(go.Scatter(
-            x=df['DATE'],
-            y=[80]*len(df['DATE']),  # Constant line at y=80
+            x=filtered_df['DATE'],
+            y=[80]*len(filtered_df['DATE']),  # Constant line at y=80
             mode='lines',  # Only line
             name='Target Weight (80kg)',
             line=dict(color='green', width=4, dash='solid'),  # Bold green line
@@ -99,7 +102,7 @@ def plot_weight(df):
             title='Weight Over Time',
             xaxis_title='Date',
             yaxis_title='Weight (kg)',
-            yaxis=dict(range=[0, df['Wt'].max() + 10]),  # Set Y-axis range based on weight data
+            yaxis=dict(range=[0, filtered_df['Wt'].max() + 10]),  # Set Y-axis range based on weight data
             hovermode='x unified'
         )
 
@@ -122,9 +125,24 @@ def main():
 
     df = get_data(csv_url)
     if df is not None:
-        # Directly plot without checking for column names
-        plot_health_tracker(df)
-        plot_weight(df)  # Plot weight if available
+        # Ensure 'DATE' is in datetime format
+        df['DATE'] = pd.to_datetime(df['DATE'], format='%d-%m-%Y')
+        
+        # Create date range slider
+        min_date = df['DATE'].min()
+        max_date = df['DATE'].max()
+        
+        start_date, end_date = st.slider(
+            "Select Date Range",
+            min_value=min_date,
+            max_value=max_date,
+            value=(min_date, max_date),
+            format="DD/MM/YYYY"
+        )
+
+        # Plot health data within the selected date range
+        plot_health_tracker(df, start_date, end_date)
+        plot_weight(df, start_date, end_date)  # Plot weight if available
     else:
         st.error("Failed to load data.")
 
