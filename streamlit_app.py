@@ -67,16 +67,18 @@ def plot_health_tracker(df):
     # Display the plot in Streamlit
     st.plotly_chart(fig)
 
-# Define a function for plotting weight
+# Define a function for plotting weight as a line plot
 def plot_weight(df):
     if 'Wt' in df.columns and df['Wt'].notna().any():  # Check if 'Wt' exists and has values
-        # Create a bar plot for Weight
+        # Create a line plot for Weight
         weight_fig = go.Figure()
-        weight_fig.add_trace(go.Bar(
+        weight_fig.add_trace(go.Scatter(
             x=df['DATE'],
             y=df['Wt'],
+            mode='lines+markers',  # Line with markers
             name='Weight',
-            marker=dict(color='orange')
+            line=dict(color='orange', width=2),
+            marker=dict(size=6)
         ))
 
         # Update layout for better appearance
