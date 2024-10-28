@@ -47,7 +47,7 @@ def main():
     # Input public Google Sheet URL
     public_sheet_url = st.text_input(
         "Enter the public Google Sheet URL",
-        "https://docs.google.com/spreadsheets/d/1oXeoZQzb6B4_kzVe2OorPJW_jHYxzD1Rx9wrGQi-hXc/edit?usp=sharing"
+        "https://docs.google.com/spreadsheets/d/1oXeoZQzb6B4_kzVe2OorPJW_jHYxzD1Rx9wrGQi-hXc/edit?gid=0#gid=0"
     )
 
     if public_sheet_url:
