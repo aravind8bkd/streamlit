@@ -2,10 +2,13 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Hardcoded public Google Sheet URL
+public_sheet_url = "https://docs.google.com/spreadsheets/d/your_sheet_id/edit#gid=0"
+
 # Function to fetch data from a public Google Sheet
-def get_gsheet_data(public_sheet_url):
+def get_gsheet_data(sheet_url):
     # Convert the Google Sheet URL into a CSV export URL
-    csv_export_url = public_sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
+    csv_export_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
     
     # Read the data into a DataFrame
     df = pd.read_csv(csv_export_url)
@@ -44,21 +47,15 @@ def plot_health_tracker(df):
 def main():
     st.header("Google Sheets Data Dashboard")
 
-    # Input public Google Sheet URL
-    public_sheet_url = st.text_input(
-        "Enter the public Google Sheet URL",
-        "https://docs.google.com/spreadsheets/d/1oXeoZQzb6B4_kzVe2OorPJW_jHYxzD1Rx9wrGQi-hXc/edit?gid=0#gid=0"
-    )
-
-    if public_sheet_url:
-        try:
-            df = get_gsheet_data(public_sheet_url)
-            if 'Date' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
-                plot_health_tracker(df)
-            else:
-                st.error("The sheet must contain 'Date', 'FBS', and 'PPBS' columns.")
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+    try:
+        # Fetch and display the data
+        df = get_gsheet_data(public_sheet_url)
+        if 'Date' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
+            plot_health_tracker(df)
+        else:
+            st.error("The sheet must contain 'Date', 'FBS', and 'PPBS' columns.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
