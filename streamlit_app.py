@@ -47,25 +47,6 @@ def plot_health_tracker(df):
         marker=dict(size=6)
     ))
 
-    # Add the normal range for FBS and PPBS
-    fig.add_trace(go.Scatter(
-        x=df['DATE'],
-        y=[100]*len(df['DATE']),
-        mode='lines',
-        name='FBS Normal Range',
-        line=dict(color='green', width=0.5, dash='dash'),
-        showlegend=False
-    ))
-
-    fig.add_trace(go.Scatter(
-        x=df['DATE'],
-        y=[140]*len(df['DATE']),
-        mode='lines',
-        name='PPBS Normal Range',
-        line=dict(color='green', width=0.5, dash='dash'),
-        showlegend=False
-    ))
-
     # Update layout for better appearance
     fig.update_layout(
         title='Blood Glucose Level',  # Updated plot title
@@ -86,36 +67,39 @@ def plot_health_tracker(df):
     # Display the plot in Streamlit
     st.plotly_chart(fig)
 
-# Define a function for plotting Weight (Wt) readings
+# Define a function for plotting weight
 def plot_weight(df):
-    # Create a bar plot for Weight
-    fig = go.Figure()
+    if 'Wt' in df.columns and df['Wt'].notna().any():  # Check if 'Wt' exists and has values
+        # Create a bar plot for Weight
+        weight_fig = go.Figure()
+        weight_fig.add_trace(go.Bar(
+            x=df['DATE'],
+            y=df['Wt'],
+            name='Weight',
+            marker=dict(color='orange')
+        ))
 
-    fig.add_trace(go.Bar(
-        x=df['DATE'],
-        y=df['Wt'],
-        name='Weight',
-        marker=dict(color='orange')
-    ))
+        # Update layout for better appearance
+        weight_fig.update_layout(
+            title='Weight Over Time',
+            xaxis_title='Date',
+            yaxis_title='Weight (kg)',
+            yaxis=dict(range=[0, df['Wt'].max() + 10]),  # Set Y-axis range based on weight data
+            hovermode='x unified'
+        )
 
-    # Update layout for better appearance
-    fig.update_layout(
-        title='Weight Tracking',
-        xaxis_title='Date',
-        yaxis_title='Weight (kg)',
-        hovermode='x unified'
-    )
+        # Update x-axis for weight plot
+        weight_fig.update_xaxes(
+            tickformat="%b-%Y",
+            tickangle=-45,
+            showspikes=True,
+            spikemode="across",
+        )
 
-    # Update x-axis to automatically adjust tick spacing based on zoom
-    fig.update_xaxes(
-        tickformat="%b-%Y",  # Format for x-axis labels
-        tickangle=-45,  # Angle for better visibility
-        showspikes=True,  # Optional: Show spikes on hover
-        spikemode="across",  # Optional: Cross-mode for spikes
-    )
-
-    # Display the plot in Streamlit
-    st.plotly_chart(fig)
+        # Display the weight plot in Streamlit
+        st.plotly_chart(weight_fig)
+    else:
+        st.warning("Weight data is not available or has no valid entries.")
 
 # Streamlit App Layout
 def main():
@@ -125,7 +109,7 @@ def main():
     if df is not None:
         # Directly plot without checking for column names
         plot_health_tracker(df)
-        plot_weight(df)  # Plot the weight as well
+        plot_weight(df)  # Plot weight if available
     else:
         st.error("Failed to load data.")
 
