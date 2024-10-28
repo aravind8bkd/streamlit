@@ -85,10 +85,7 @@ def main():
     st.header("Health Tracker")  # Header for Streamlit
 
     df = get_data(csv_url)
-    if df is not None:
-        # Debugging: Show the columns of the DataFrame
-        st.write("Columns in the DataFrame:", df.columns.tolist())  # Display column names for debugging
-        
+    if df is not None:        
         # Check for exact column names: 'DATE', 'FBS', and 'PPBS'
         if 'DATE' in df.columns and 'FBS' in df.columns and 'PPBS' in df.columns:
             plot_health_tracker(df)
