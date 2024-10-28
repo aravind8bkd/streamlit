@@ -8,7 +8,7 @@ public_sheet_url = "https://www.dropbox.com/scl/fi/v6z8u5w7nz9q4yymnuy3w/myhealt
 # Function to fetch data from a public Google Sheet
 def get_gsheet_data(sheet_url):
     try:
-        df = pd.read_csv(csv_url)
+        df = pd.read_csv(sheet_url)
         return df
     except Exception as e:
         st.error(f"Error loading CSV: {e}")
