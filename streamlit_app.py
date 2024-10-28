@@ -34,7 +34,8 @@ def plot_health_tracker(df):
         mode='lines+markers', 
         name='FBS', 
         line=dict(color='blue'),
-        marker=dict(size=6)
+        marker=dict(size=6),
+        hovertemplate='Date: %{x|%b-%Y}<br>FBS: %{y}<extra></extra>'  # Custom hover info
     ))
 
     # Add PPBS line
@@ -44,35 +45,30 @@ def plot_health_tracker(df):
         mode='lines+markers', 
         name='PPBS', 
         line=dict(color='red'),
-        marker=dict(size=6)
+        marker=dict(size=6),
+        hovertemplate='Date: %{x|%b-%Y}<br>PPBS: %{y}<extra></extra>'  # Custom hover info
     ))
 
-    # Shade the normal range for FBS and PPBS
-    fig.add_trace(go.Scatter(
-        x=df['DATE'],
-        y=[100]*len(df['DATE']),  # Upper line for FBS normal range
-        mode='lines',
-        name='FBS Normal Range',
-        line=dict(color='green', width=0.5, dash='dash'),
-        showlegend=False
-    ))
-
-    fig.add_trace(go.Scatter(
-        x=df['DATE'],
-        y=[140]*len(df['DATE']),  # Upper line for PPBS normal range
-        mode='lines',
-        name='PPBS Normal Range',
-        line=dict(color='green', width=0.5, dash='dash'),
-        showlegend=False
-    ))
+    # Define normal range values
+    fbs_normal_upper = 100
+    ppbs_normal_upper = 140
 
     # Add area fill between the normal range
     fig.add_trace(go.Scatter(
         x=pd.concat([df['DATE'], df['DATE'][::-1]]),  # Dates for area fill
-        y=pd.concat([[100]*len(df['DATE']), [140]*len(df['DATE'])[::-1]]),  # Fill from 100 to 140
+        y=pd.concat([[0] * len(df), [fbs_normal_upper]*len(df)[::-1]]),  # Fill from 0 to 100 for FBS
         fill='toself',  # Fill area
         fillcolor='rgba(144, 238, 144, 0.5)',  # Light green color with transparency
-        name='Normal Range',
+        name='Normal Range for FBS',
+        showlegend=False
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=pd.concat([df['DATE'], df['DATE'][::-1]]),  # Dates for area fill
+        y=pd.concat([[fbs_normal_upper] * len(df), [ppbs_normal_upper]*len(df)[::-1]]),  # Fill from 100 to 140 for PPBS
+        fill='toself',  # Fill area
+        fillcolor='rgba(144, 238, 144, 0.5)',  # Light green color with transparency
+        name='Normal Range for PPBS',
         showlegend=False
     ))
 
@@ -112,3 +108,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
