@@ -69,7 +69,7 @@ def plot_health_tracker(df):
     # Add area fill between the normal range
     fig.add_trace(go.Scatter(
         x=pd.concat([df['DATE'], df['DATE'][::-1]]),  # Dates for area fill
-        y=pd.concat([[100]*len(df['DATE']), [140]*len(df['DATE')[::-1]]]),  # Fill from 100 to 140
+        y=pd.concat([[100]*len(df['DATE']), [140]*len(df['DATE')[::-1]]),  # Fill from 100 to 140
         fill='toself',  # Fill area
         fillcolor='rgba(144, 238, 144, 0.5)',  # Light green color with transparency
         name='Normal Range',
